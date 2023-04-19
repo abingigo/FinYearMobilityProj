@@ -4,6 +4,7 @@ public class Policies {
 	public static final int LOWEST_LATENCY = 0;
 	public static final int LOWEST_DIST_BW_SMARTTING_SERVERCLOUDLET = 1;
 	public static final int LOWEST_DIST_BW_SMARTTING_AP = 2;
+	public static final int WEIGHTED_MAJORITY = 3;
 	public static final int ILP = 3;
 	public static final int FIXED_MIGRATION_POINT = 0;
 	public static final int SPEED_MIGRATION_POINT = 1;

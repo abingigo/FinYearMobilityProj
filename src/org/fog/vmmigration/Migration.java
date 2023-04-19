@@ -17,7 +17,7 @@ import org.fog.localization.DiscoverLocalization;
 import org.fog.localization.Distances;
 import org.fog.vmmobile.AppExample;
 import org.fog.vmmobile.constants.*;
-
+ 
 public class Migration {
 
 	private static boolean migrationPoint;
@@ -262,6 +262,13 @@ public class Migration {
 			}
 		}
 		return choose;
+	}
+
+	public static int weightedMajorityServerCloudlet(List<FogDevice> oldServerCloudlets,
+		List<ApDevice> oldApDevices, MobileDevice smartThing) {
+		//REQUIRED CHANGE 2
+		//ALGORITHM 3
+		return 0;
 	}
 
 	public static void lowestLatencyCostServerCloudletILP(List<FogDevice> oldServerCloudlets,

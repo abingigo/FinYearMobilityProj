@@ -72,6 +72,7 @@ import org.fog.vmmigration.PrepareContainerVM;
 import org.fog.vmmigration.PrepareLiveMigration;
 import org.fog.vmmigration.Service;
 import org.fog.vmmigration.VmMigrationTechnique;
+import org.fog.vmmigration.WeightedMajority;
 import org.fog.vmmobile.constants.MaxAndMin;
 import org.fog.vmmobile.constants.Policies;
 import org.fog.vmmobile.constants.Services;
@@ -173,6 +174,7 @@ public class AppExample {
 		// LOWEST_LATENCY = 0;
 		// LOWEST_DIST_BW_SMARTTING_SERVERCLOUDLET = 1;
 		// LOWEST_DIST_BW_SMARTTING_AP = 2;
+		// WEIGHTED_MAJORITY = 3;
 		setMigStrategyPolicy(Integer.parseInt(args[3]));
 		setMaxSmartThings(Integer.parseInt(args[4]));
 		setMaxBandwidth(Integer.parseInt(args[5]));
@@ -232,6 +234,7 @@ public class AppExample {
 		int index;// Auxiliary
 		int myCount = 0;
 
+		//REPLACE WITH MCG CHANGE REQUIRED 1
 		// it makes the connection between SmartThing and the closest AccessPoint
 		for (MobileDevice st : getSmartThings()) {
 			if (!ApDevice.connectApSmartThing(getApDevices(), st,
@@ -260,6 +263,7 @@ public class AppExample {
 
 			}
 		}
+		//TILL HERE REPLACE
 		/** STEP 3: CREATE BROKER**/
 
 		for (MobileDevice st : getSmartThings()) {
@@ -782,10 +786,14 @@ public class AppExample {
 			migrationStrategy = new LowestDistBwSmartThingServerCloudlet(
 				getServerCloudlets(), getApDevices(), getMigPointPolicy(),
 				getPolicyReplicaVM());
-		} else { // Policies.LOWEST_DIST_BW_SMARTTING_AP
+		} else if (getMigStrategyPolicy() == Policies.LOWEST_DIST_BW_SMARTTING_AP){ // LOWEST_DIST_BW_SMARTTING_AP
 			migrationStrategy = new LowestDistBwSmartThingAP(
-				getServerCloudlets(), getApDevices(), getMigPointPolicy(),
-				getPolicyReplicaVM());
+				getServerCloudlets(), getApDevices(),
+				getMigPointPolicy(), getPolicyReplicaVM());
+		} else {
+			migrationStrategy = new WeightedMajority(
+				getServerCloudlets(), getApDevices(),
+				getMigPointPolicy(), getPolicyReplicaVM());
 		}
 
 		BeforeMigration beforeMigration = null;
@@ -887,8 +895,12 @@ public class AppExample {
 					migrationStrategy = new LowestDistBwSmartThingServerCloudlet(
 						getServerCloudlets(), getApDevices(),
 						getMigPointPolicy(), getPolicyReplicaVM());
-				} else { // LOWEST_DIST_BW_SMARTTING_AP
+				} else if (getMigStrategyPolicy() == Policies.LOWEST_DIST_BW_SMARTTING_AP){ // LOWEST_DIST_BW_SMARTTING_AP
 					migrationStrategy = new LowestDistBwSmartThingAP(
+						getServerCloudlets(), getApDevices(),
+						getMigPointPolicy(), getPolicyReplicaVM());
+				} else {
+					migrationStrategy = new WeightedMajority(
 						getServerCloudlets(), getApDevices(),
 						getMigPointPolicy(), getPolicyReplicaVM());
 				}
