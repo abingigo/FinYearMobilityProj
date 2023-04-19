@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
 
 import org.cloudbus.cloudsim.NetworkTopology;
 import org.fog.entities.*;
@@ -264,11 +266,31 @@ public class Migration {
 		return choose;
 	}
 
-	public static int weightedMajorityServerCloudlet(List<FogDevice> oldServerCloudlets,
-		List<ApDevice> oldApDevices, MobileDevice smartThing) {
+	// NOOB CODE 1
+	public static int weightedMajorityServerCloudlet(List<FogDevice> allServerCloudlets,
+		List<ApDevice> allApDevices, MobileDevice smartThing) {
 		//REQUIRED CHANGE 2
 		//ALGORITHM 3
-		return 0;
+
+			Map<Integer, Double> payoffMatrix = new HashMap<>();
+		for (FogDevice f : allServerCloudlets)
+		{
+			ApDevice ap = Distances.theClosestApToServerCloudlet(f, allApDevices);
+			payoffMatrix.put(f.getId(), (f.getHost().getTotalMips() - f.getEnergyConsumption()) / sumCostFunction(f, ap, smartThing));
+		}
+		double maxValue = Double.MIN_VALUE;
+		int devNo = -1;
+		for (Map.Entry<Integer, Double> entry : payoffMatrix.entrySet()) {
+			int key = entry.getKey();
+			double value = entry.getValue();
+			if(value > maxValue)
+			{
+				maxValue = value;
+				devNo = key;
+			}
+		}
+
+		return devNo;
 	}
 
 	public static void lowestLatencyCostServerCloudletILP(List<FogDevice> oldServerCloudlets,

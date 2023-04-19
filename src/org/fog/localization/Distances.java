@@ -46,7 +46,7 @@ public class Distances {
 	}
 
 	public static int theClosestServerCloudlet(List<FogDevice> serverCloudlets,
-		MobileDevice smartThing) {
+			MobileDevice smartThing) {
 		int choose = serverCloudlets.get(0).getMyId();
 		double min = checkDistance(serverCloudlets.get(0).getCoord(), smartThing.getFutureCoord());
 
@@ -62,7 +62,7 @@ public class Distances {
 	}
 
 	public static int theClosestServerCloudletToAp(List<FogDevice> serverCloudlets,
-		ApDevice apDevice) {
+			ApDevice apDevice) {
 
 		int choose = 0;
 		double min = checkDistance(serverCloudlets.get(0).getCoord(), apDevice.getCoord());
@@ -81,6 +81,27 @@ public class Distances {
 
 	}
 
+	//NOOB CODE 2
+	public static ApDevice theClosestApToServerCloudlet(FogDevice serverCloudlet,
+			List<ApDevice> apDevice) {
+
+		ApDevice choose = null;
+		double min = checkDistance(serverCloudlet.getCoord(), apDevice.get(0).getCoord());
+
+		for (ApDevice ap : apDevice) {
+			setDistance(checkDistance(serverCloudlet.getCoord(), ap.getCoord()));
+			// if(getDistance() != 0)
+			if (getDistance() < min) {
+				choose = ap;// id
+				min = getDistance();
+			}
+
+		}
+
+		return choose;// id
+
+	}
+
 	public static double findTheta(int coordX, int coordY) {
 		setCoordX(coordX);
 		setCoordY(coordY);
@@ -88,7 +109,8 @@ public class Distances {
 			setTheta(Math.atan(((double) coordY) / ((double) coordX)) * (180 / Math.PI));
 		else
 			setTheta(0);// the point is
-		// Theta is negative, but it is first quadrant and it needs to be in second quadrant
+		// Theta is negative, but it is first quadrant and it needs to be in second
+		// quadrant
 		if (coordX < 0 && coordY >= 0)
 			return 180 + getTheta();
 		// Theta is positive and it needs to be in third quadrant
@@ -131,7 +153,7 @@ public class Distances {
 	}
 
 	public static double checkDistance(Coordinate firstCoord, Coordinate secondCoord) {
-		//Distance between two points formula
+		// Distance between two points formula
 		setFirst((double) Math.pow(firstCoord.getCoordX() - secondCoord.getCoordX(), 2));
 		setSecond((double) Math.pow(firstCoord.getCoordY() - secondCoord.getCoordY(), 2));
 		setDistance(Math.sqrt(getFirst() + getSecond()));

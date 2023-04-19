@@ -137,7 +137,7 @@ public class AppExample {
 		 *  First parameter: 0/1 -> migrations are denied or allowed
 		 *  Second parameter: Positive Integer -> seed to be used in the random numbers generation
 		 *  Third parameter: 0/1 -> Migration point approach is fixed (0) or based on the user speed (1)
-		 *  Fourth parameter: 0/1/2 -> Migration strategy approach is based on the lowest latency (0), lowest distance between the user and cloudlet (1), or lowest distance between user and Access Point (2)
+		 *  Fourth parameter: 0/1/2 -> Migration strategy approach is based on the lowest latency (0), lowest distance between the user and cloudlet (1), lowest distance between user and Access Point (2) or weighted majority (3)
 		 *  Fifth parameter: Positive Integer -> Number of users
 		 *  Sixth parameter: Positive Integer -> Base Network Bandwidth between cloudlets
 		 *  Seventh parameter: 0/1/2 -> Migration policy based on Complete VM/Cold migration (0), Complete Container migration (1), or Container Live Migration (3)
