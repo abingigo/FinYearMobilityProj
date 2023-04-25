@@ -234,36 +234,64 @@ public class AppExample {
 		int index;// Auxiliary
 		int myCount = 0;
 
-		//REPLACE WITH MCG CHANGE REQUIRED 1
-		// it makes the connection between SmartThing and the closest AccessPoint
-		for (MobileDevice st : getSmartThings()) {
-			if (!ApDevice.connectApSmartThing(getApDevices(), st,
-				getRand().nextDouble())) {
-				myCount++;
-				LogMobile.debug("AppExample.java",
-					st.getName() + " isn't connected");
+		//*******************************OLD CODE****************************************************************
+		if(getMigStrategyPolicy() != Policies.WEIGHTED_MAJORITY)
+		{
+			//REPLACE WITH MCG CHANGE REQUIRED 1
+			// it makes the connection between SmartThing and the closest AccessPoint
+			for (MobileDevice st : getSmartThings()) {
+				if (!ApDevice.connectApSmartThing(getApDevices(), st,
+					getRand().nextDouble())) {
+					myCount++;
+					LogMobile.debug("AppExample.java",
+						st.getName() + " isn't connected");
+				}
+			}
+			LogMobile.debug("AppExample.java", "total no connection: " + myCount);
+
+			// it makes the connection between AccessPoint and the closest ServerCloudlet
+			for (ApDevice ap : getApDevices()) {
+				index = Distances.theClosestServerCloudletToAp(getServerCloudlets(), ap);
+				ap.setServerCloudlet(getServerCloudlets().get(index));
+				ap.setParentId(getServerCloudlets().get(index).getId());
+				getServerCloudlets().get(index).setApDevices(ap, Policies.ADD);
+				NetworkTopology.addLink(serverCloudlets.get(index).getId(),
+					ap.getId(), ap.getDownlinkBandwidth(),
+					getRand().nextDouble());
+
+				// it makes the symbolic link between smartThing and ServerCloudlet
+				for (MobileDevice st : ap.getSmartThings()) {
+					getServerCloudlets().get(index).connectServerCloudletSmartThing(st);
+					getServerCloudlets().get(index).setSmartThingsWithVm(st, Policies.ADD);
+
+				}
 			}
 		}
-		LogMobile.debug("AppExample.java", "total no connection: " + myCount);
-
-		// it makes the connection between AccessPoint and the closest ServerCloudlet
-		for (ApDevice ap : getApDevices()) {
-			index = Distances.theClosestServerCloudletToAp(getServerCloudlets(), ap);
-			ap.setServerCloudlet(getServerCloudlets().get(index));
-			ap.setParentId(getServerCloudlets().get(index).getId());
-			getServerCloudlets().get(index).setApDevices(ap, Policies.ADD);
-			NetworkTopology.addLink(serverCloudlets.get(index).getId(),
-				ap.getId(), ap.getDownlinkBandwidth(),
-				getRand().nextDouble());
-
-			// it makes the symbolic link between smartThing and ServerCloudlet
-			for (MobileDevice st : ap.getSmartThings()) {
-				getServerCloudlets().get(index).connectServerCloudletSmartThing(st);
-				getServerCloudlets().get(index).setSmartThingsWithVm(st, Policies.ADD);
-
+		else
+		{
+			// *************************************NEW CODE**************************************
+			for (ApDevice ap : getApDevices()) {
+				index = Distances.theClosestServerCloudletToAp(getServerCloudlets(), ap);
+				ap.setServerCloudlet(getServerCloudlets().get(index));
+				ap.setParentId(getServerCloudlets().get(index).getId());
+				getServerCloudlets().get(index).setApDevices(ap, Policies.ADD);
+				NetworkTopology.addLink(serverCloudlets.get(index).getId(),
+					ap.getId(), ap.getDownlinkBandwidth(),
+					getRand().nextDouble());
 			}
+	
+			for (MobileDevice st : getSmartThings()) {
+				if (!ApDevice.connectApSmartThingWeightedMajority(getServerCloudlets(), getApDevices(), st,
+					getRand().nextDouble())) {
+					myCount++;
+					LogMobile.debug("AppExample.java",
+						st.getName() + " isn't connected");
+				}
+			}
+			LogMobile.debug("AppExample.java", "total no connection: " + myCount);
+	
+			// ***************************************END*****************************************
 		}
-		//TILL HERE REPLACE
 		/** STEP 3: CREATE BROKER**/
 
 		for (MobileDevice st : getSmartThings()) {
@@ -432,6 +460,15 @@ public class AppExample {
 						+ getSeed() + "_st_" + st.getMyId(), st.getMyId());
 					MyStatistics.getInstance().setToPrint(
 						"FIXED_MIGRATION_POINT_with_LOWEST_DIST_BW_SMARTTING_SERVERCLOUDLET");
+				} else if (getMigStrategyPolicy() == Policies.WEIGHTED_MAJORITY) {
+					MyStatistics.getInstance().setFileMap("./outputLatencies/"+ st.getMyId()
+						+ "/latencies_FIXED_MIGRATION_POINT_with_WEIGHTED_MAJORITY_seed_"
+						+ getSeed() + "_st_" + st.getMyId()+ ".txt", st.getMyId());
+					MyStatistics.getInstance().putLantencyFileName(
+						"/FIXED_MIGRATION_POINT_with_WEIGHTED_MAJORITY_seed_"
+						+ getSeed() + "_st_" + st.getMyId(),st.getMyId());
+					MyStatistics.getInstance().setToPrint(
+						"FIXED_MIGRATION_POINT_with_WEIGHTED_MAJORITY_seed_");
 				}
 			} else if (getMigPointPolicy() == Policies.SPEED_MIGRATION_POINT) {
 				if (getMigStrategyPolicy() == Policies.LOWEST_LATENCY) {
@@ -463,6 +500,15 @@ public class AppExample {
 						+ getSeed() + "_st_" + st.getMyId(),st.getMyId());
 					MyStatistics.getInstance().setToPrint(
 						"SPEED_MIGRATION_POINT_with_LOWEST_DIST_BW_SMARTTING_SERVERCLOUDLET");
+				} else if (getMigStrategyPolicy() == Policies.WEIGHTED_MAJORITY) {
+					MyStatistics.getInstance().setFileMap("./outputLatencies/"+ st.getMyId()
+						+ "/latencies_SPEED_MIGRATION_POINT_with_WEIGHTED_MAJORITY_seed_"
+						+ getSeed() + "_st_" + st.getMyId()+ ".txt", st.getMyId());
+					MyStatistics.getInstance().putLantencyFileName(
+						"/SPEED_MIGRATION_POINT_with_WEIGHTED_MAJORITY_seed_"
+						+ getSeed() + "_st_" + st.getMyId(),st.getMyId());
+					MyStatistics.getInstance().setToPrint(
+						"SPEED_MIGRATION_POINT_with_WEIGHTED_MAJORITY_seed_");
 				}
 			}
 			MyStatistics.getInstance().putLantencyFileName("Time-latency", st.getMyId());

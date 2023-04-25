@@ -1,0 +1,10 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/run/user/1000/doc/ad8e7218/commons-io-2.11.0-test-sources.jar",
+        "/run/user/1000/doc/51d238aa/commons-io-2.11.0-tests.jar",
+        "/run/user/1000/doc/a29dc01e/commons-io-2.11.0-sources.jar",
+        "/run/user/1000/doc/af4dbbde/commons-io-2.11.0-javadoc.jar",
+        "/run/user/1000/doc/ae8f1e06/commons-io-2.11.0.jar"
+    ]
+}

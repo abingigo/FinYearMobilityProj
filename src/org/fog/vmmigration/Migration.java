@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Map;
 
+import org.cloudbus.cloudsim.DatacenterCharacteristics;
 import org.cloudbus.cloudsim.NetworkTopology;
 import org.fog.entities.*;
 import org.fog.localization.Coordinate;
@@ -34,6 +35,7 @@ public class Migration {
 	private static List<ApDevice> apsAvailable;
 	private static List<FogDevice> serverCloudletsAvailable;
 	private static int policyReplicaVM;
+	private static int chosenDevice;
 
 	/**
 	 * @param args
@@ -266,13 +268,26 @@ public class Migration {
 		return choose;
 	}
 
+	public static int getWeightedMajorityAp(List<FogDevice> allServerCloudlets, List<ApDevice> allApDevices)
+	{
+		FogDevice targetDevice = null;
+		for (FogDevice device : allServerCloudlets) {
+			DatacenterCharacteristics characteristics = device.getCharacteristics();
+			if (characteristics.getId() == chosenDevice) {
+				targetDevice = device;
+				break;
+			}
+		}
+		return Distances.theClosestApToServerCloudlet(targetDevice, allApDevices).getId();
+	}
+
 	// NOOB CODE 1
 	public static int weightedMajorityServerCloudlet(List<FogDevice> allServerCloudlets,
 		List<ApDevice> allApDevices, MobileDevice smartThing) {
 		//REQUIRED CHANGE 2
 		//ALGORITHM 3
 
-			Map<Integer, Double> payoffMatrix = new HashMap<>();
+		Map<Integer, Double> payoffMatrix = new HashMap<>();
 		for (FogDevice f : allServerCloudlets)
 		{
 			ApDevice ap = Distances.theClosestApToServerCloudlet(f, allApDevices);

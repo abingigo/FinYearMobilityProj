@@ -1,19 +1,16 @@
 package org.fog.entities;
 
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.cloudbus.cloudsim.NetworkTopology;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.localization.*;
 import org.fog.placement.MobileController;
+import org.fog.vmmigration.LatencyByDistance;
 import org.fog.vmmobile.LogMobile;
 import org.fog.vmmobile.constants.MobileEvents;
 import org.fog.vmmobile.constants.Policies;
@@ -125,6 +122,71 @@ public class ApDevice extends FogDevice {
 			return false;
 		}
 
+	}
+
+	private static double sumCostFunction(FogDevice serverCloudlet, ApDevice nextAp,
+		MobileDevice smartThing) {
+		double sum = -1;
+		if (nextAp.getServerCloudlet().equals(serverCloudlet)) {
+			sum = NetworkTopology.getDelay(smartThing.getId(), nextAp.getId())
+				+ NetworkTopology.getDelay(nextAp.getId(), nextAp.getServerCloudlet().getId())
+				+ (1.0 / nextAp.getServerCloudlet().getHost().getAvailableMips())
+				+ LatencyByDistance.latencyConnection(nextAp.getServerCloudlet(), smartThing);
+		}
+		else {
+			sum = NetworkTopology.getDelay(smartThing.getId(), nextAp.getId())
+				+ NetworkTopology.getDelay(nextAp.getId(), nextAp.getServerCloudlet().getId())
+				+ 1.0 // router
+				+ NetworkTopology.getDelay(nextAp.getServerCloudlet().getId(),
+					serverCloudlet.getId())
+				+ (1.0 / serverCloudlet.getHost().getAvailableMips())
+				+ LatencyByDistance.latencyConnection(serverCloudlet, smartThing);
+		}
+		return sum;
+	}
+
+	public static boolean connectApSmartThingWeightedMajority(List<FogDevice> fogDevices, List<ApDevice> apDevices, MobileDevice st,
+	double delay)
+	{
+		Map<Integer, Double> payoffMatrix = new HashMap<>();
+		for (FogDevice f : fogDevices)
+		{
+			ApDevice ap = Distances.theClosestApToServerCloudlet(f, apDevices);
+			payoffMatrix.put(f.getId(), (f.getHost().getTotalMips() - f.getEnergyConsumption()) / sumCostFunction(f, ap, st));
+		}
+		double maxValue = Double.MIN_VALUE;
+		int devNo = -1;
+		for (Map.Entry<Integer, Double> entry : payoffMatrix.entrySet()) {
+			int key = entry.getKey();
+			double value = entry.getValue();
+			if(value > maxValue)
+			{
+				maxValue = value;
+				devNo = key;
+			}
+		}
+
+		if(devNo == -1) return false;
+
+		fogDevices.get(devNo).connectServerCloudletSmartThing(st);
+		fogDevices.get(devNo).setSmartThingsWithVm(st, Policies.ADD);
+
+		ApDevice ap = Distances.theClosestApToServerCloudlet(fogDevices.get(devNo), apDevices);
+
+		if (ap.getMaxSmartThing() > ap.getSmartThings().size()) {
+			st.setSourceAp(ap);
+			ap.setSmartThings(st, Policies.ADD);
+			NetworkTopology.addLink(ap.getId(), st.getId(),
+				st.getUplinkBandwidth(), delay);
+			LogMobile.debug("ApDevice.java", st.getName() + " was connected to "
+				+ st.getSourceAp().getName());
+			ap.setUplinkLatency(
+				ap.getUplinkLatency() + delay);
+			return true;
+		}
+		else {// Ap is full
+			return false;
+		}
 	}
 
 	public ApDevice(String name, int coordX, int coordY, int id) {
