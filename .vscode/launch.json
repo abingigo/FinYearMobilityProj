@@ -1,0 +1,99 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "SDNExample",
+            "request": "launch",
+            "mainClass": "org.cloudbus.cloudsim.sdn.example.SDNExample",
+            "projectName": "MobFogSim"
+        },
+        {
+            "type": "java",
+            "name": "PhysicalTopologyGenerator",
+            "request": "launch",
+            "mainClass": "org.cloudbus.cloudsim.sdn.example.topogenerators.PhysicalTopologyGenerator",
+            "projectName": "MobFogSim"
+        },
+        {
+            "type": "java",
+            "name": "VMRequestRandomGenerator",
+            "request": "launch",
+            "mainClass": "org.cloudbus.cloudsim.sdn.example.topogenerators.VMRequestRandomGenerator",
+            "projectName": "MobFogSim"
+        },
+        {
+            "type": "java",
+            "name": "VirtualTopologyGeneratorVmTypes",
+            "request": "launch",
+            "mainClass": "org.cloudbus.cloudsim.sdn.example.topogenerators.VirtualTopologyGeneratorVmTypes",
+            "projectName": "MobFogSim"
+        },
+        {
+            "type": "java",
+            "name": "GraphicSDN",
+            "request": "launch",
+            "mainClass": "org.cloudbus.cloudsim.sdn.graph.example.GraphicSDN",
+            "projectName": "MobFogSim"
+        },
+        {
+            "type": "java",
+            "name": "VMRequestGenerator",
+            "request": "launch",
+            "mainClass": "org.cloudbus.cloudsim.sdn.request.VMRequestGenerator",
+            "projectName": "MobFogSim"
+        },
+        {
+            "type": "java",
+            "name": "Check",
+            "request": "launch",
+            "mainClass": "org.cloudbus.cloudsim.util.Check",
+            "projectName": "MobFogSim"
+        },
+        {
+            "type": "java",
+            "name": "CleanFromJson",
+            "request": "launch",
+            "mainClass": "org.fog.examples.CleanFromJson",
+            "projectName": "MobFogSim"
+        },
+        {
+            "type": "java",
+            "name": "DCNSFog",
+            "request": "launch",
+            "mainClass": "org.fog.examples.DCNSFog",
+            "projectName": "MobFogSim"
+        },
+        {
+            "type": "java",
+            "name": "VRGameFog",
+            "request": "launch",
+            "mainClass": "org.fog.examples.VRGameFog",
+            "projectName": "MobFogSim"
+        },
+        {
+            "type": "java",
+            "name": "FogGui",
+            "request": "launch",
+            "mainClass": "org.fog.gui.example.FogGui",
+            "projectName": "MobFogSim"
+        },
+        {
+            "type": "java",
+            "name": "AppExample",
+            "request": "launch",
+            "mainClass": "org.fog.vmmobile.AppExample",
+            "projectName": "MobFogSim",
+            "classPaths": ["${workspaceFolder}/jars/commons-io-2.11.0.jar", "${workspaceFolder}/jars/cloudsim-3.0.3-sources.jar"]
+        }
+    ]
+}

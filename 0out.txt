@@ -1,4 +1,0 @@
-0 Position: 7980, 6839 Direction: 2 Speed: 0
-Source AP: null Dest AP: null Host: 145
-Local server: null  Apps null Map null
-Dest server: null Apps: null Map: null
