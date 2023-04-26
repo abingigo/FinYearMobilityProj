@@ -429,6 +429,7 @@ public class AppExample {
 		TimeKeeper.getInstance().setSimulationStartTime(
 			Calendar.getInstance().getTimeInMillis());
 		MyStatistics.getInstance().setSeed(getSeed());
+		System.out.println("Whereami");
 		for (MobileDevice st : getSmartThings()) {
 			if (getMigPointPolicy() == Policies.FIXED_MIGRATION_POINT) {
 				if (getMigStrategyPolicy() == Policies.LOWEST_LATENCY) {
@@ -461,6 +462,7 @@ public class AppExample {
 					MyStatistics.getInstance().setToPrint(
 						"FIXED_MIGRATION_POINT_with_LOWEST_DIST_BW_SMARTTING_SERVERCLOUDLET");
 				} else if (getMigStrategyPolicy() == Policies.WEIGHTED_MAJORITY) {
+					System.out.println("Bleh");
 					MyStatistics.getInstance().setFileMap("./outputLatencies/"+ st.getMyId()
 						+ "/latencies_FIXED_MIGRATION_POINT_with_WEIGHTED_MAJORITY_seed_"
 						+ getSeed() + "_st_" + st.getMyId()+ ".txt", st.getMyId());
@@ -468,7 +470,7 @@ public class AppExample {
 						"/FIXED_MIGRATION_POINT_with_WEIGHTED_MAJORITY_seed_"
 						+ getSeed() + "_st_" + st.getMyId(),st.getMyId());
 					MyStatistics.getInstance().setToPrint(
-						"FIXED_MIGRATION_POINT_with_WEIGHTED_MAJORITY_seed_");
+						"FIXED_MIGRATION_POINT_with_WEIGHTED_MAJORITY");
 				}
 			} else if (getMigPointPolicy() == Policies.SPEED_MIGRATION_POINT) {
 				if (getMigStrategyPolicy() == Policies.LOWEST_LATENCY) {
@@ -508,7 +510,7 @@ public class AppExample {
 						"/SPEED_MIGRATION_POINT_with_WEIGHTED_MAJORITY_seed_"
 						+ getSeed() + "_st_" + st.getMyId(),st.getMyId());
 					MyStatistics.getInstance().setToPrint(
-						"SPEED_MIGRATION_POINT_with_WEIGHTED_MAJORITY_seed_");
+						"SPEED_MIGRATION_POINT_with_WEIGHTED_MAJORITY");
 				}
 			}
 			MyStatistics.getInstance().putLantencyFileName("Time-latency", st.getMyId());
@@ -663,15 +665,14 @@ public class AppExample {
 		}
 	}
 
-	private static void addApDevicesFixed(List<ApDevice> apDevices,
-		Coordinate coordDevices) {
+	private static void addApDevicesFixed(List<ApDevice> apDevices, Coordinate coordDevices) {
 		int i = 0;
 		boolean control = true;
 		int coordY = 0;
 		for (int coordX = 0; coordX < MaxAndMin.MAX_X; coordX += (2
 			* MaxAndMin.AP_COVERAGE
 			- (2 * MaxAndMin.AP_COVERAGE / 3))) { /* evenly distributed */
-			System.out.println("Creating Ap devices");
+			System.out.println("Making Ap devices");
 			for (coordY = 0; coordY < MaxAndMin.MAX_Y; coordY += (2
 				* MaxAndMin.AP_COVERAGE
 				- (2 * MaxAndMin.AP_COVERAGE / 3)), i++) {

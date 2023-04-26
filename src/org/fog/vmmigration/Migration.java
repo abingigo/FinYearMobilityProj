@@ -278,7 +278,17 @@ public class Migration {
 				break;
 			}
 		}
-		return Distances.theClosestApToServerCloudlet(targetDevice, allApDevices).getId();
+
+		ApDevice ap = null;
+		for(ApDevice a : allApDevices)
+		{
+			if(a.getServerCloudlet().getId() == targetDevice.getId())
+			{
+				ap = a;
+				break;
+			}
+		}
+		return ap.getId();
 	}
 
 	// NOOB CODE 1
@@ -290,7 +300,15 @@ public class Migration {
 		Map<Integer, Double> payoffMatrix = new HashMap<>();
 		for (FogDevice f : allServerCloudlets)
 		{
-			ApDevice ap = Distances.theClosestApToServerCloudlet(f, allApDevices);
+			ApDevice ap = null;
+			for(ApDevice a : allApDevices)
+			{
+				if(a.getServerCloudlet().getId() == f.getId())
+				{
+					ap = a;
+					break;
+				}
+			}
 			payoffMatrix.put(f.getId(), (f.getHost().getTotalMips() - f.getEnergyConsumption()) / sumCostFunction(f, ap, smartThing));
 		}
 		double maxValue = Double.MIN_VALUE;

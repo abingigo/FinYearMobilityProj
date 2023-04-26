@@ -151,7 +151,15 @@ public class ApDevice extends FogDevice {
 		Map<Integer, Double> payoffMatrix = new HashMap<>();
 		for (FogDevice f : fogDevices)
 		{
-			ApDevice ap = Distances.theClosestApToServerCloudlet(f, apDevices);
+			ApDevice ap = null;
+			for(ApDevice a : apDevices)
+			{
+				if(a.getServerCloudlet().getId() == f.getId())
+				{
+					ap = a;
+					break;
+				}
+			}
 			payoffMatrix.put(f.getId(), (f.getHost().getTotalMips() - f.getEnergyConsumption()) / sumCostFunction(f, ap, st));
 		}
 		double maxValue = Double.MIN_VALUE;
@@ -171,7 +179,15 @@ public class ApDevice extends FogDevice {
 		fogDevices.get(devNo).connectServerCloudletSmartThing(st);
 		fogDevices.get(devNo).setSmartThingsWithVm(st, Policies.ADD);
 
-		ApDevice ap = Distances.theClosestApToServerCloudlet(fogDevices.get(devNo), apDevices);
+		ApDevice ap = null;
+		for(ApDevice a : apDevices)
+		{
+			if(a.getServerCloudlet().getId() == fogDevices.get(devNo).getId())
+			{
+				ap = a;
+				break;
+			}
+		}
 
 		if (ap.getMaxSmartThing() > ap.getSmartThings().size()) {
 			st.setSourceAp(ap);

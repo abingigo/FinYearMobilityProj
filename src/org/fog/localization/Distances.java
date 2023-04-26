@@ -82,25 +82,25 @@ public class Distances {
 	}
 
 	//NOOB CODE 2
-	public static ApDevice theClosestApToServerCloudlet(FogDevice serverCloudlet,
-			List<ApDevice> apDevice) {
+	// public static ApDevice theClosestApToServerCloudlet(FogDevice serverCloudlet,
+	// 		List<ApDevice> apDevice) {
 
-		ApDevice choose = null;
-		double min = checkDistance(serverCloudlet.getCoord(), apDevice.get(0).getCoord());
+	// 	ApDevice choose = null;
+	// 	double min = checkDistance(serverCloudlet.getCoord(), apDevice.get(0).getCoord());
 
-		for (ApDevice ap : apDevice) {
-			setDistance(checkDistance(serverCloudlet.getCoord(), ap.getCoord()));
-			// if(getDistance() != 0)
-			if (getDistance() < min) {
-				choose = ap;// id
-				min = getDistance();
-			}
+	// 	for (ApDevice ap : apDevice) {
+	// 		setDistance(checkDistance(serverCloudlet.getCoord(), ap.getCoord()));
+	// 		// if(getDistance() != 0)
+	// 		if (getDistance() < min) {
+	// 			choose = ap;// id
+	// 			min = getDistance();
+	// 		}
 
-		}
+	// 	}
 
-		return choose;// id
+	// 	return choose;// id
 
-	}
+	// }
 
 	public static double findTheta(int coordX, int coordY) {
 		setCoordX(coordX);
