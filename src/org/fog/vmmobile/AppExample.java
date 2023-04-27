@@ -235,7 +235,7 @@ public class AppExample {
 		int myCount = 0;
 
 		//*******************************OLD CODE****************************************************************
-		if(getMigStrategyPolicy() != Policies.WEIGHTED_MAJORITY)
+		if(true)
 		{
 			//REPLACE WITH MCG CHANGE REQUIRED 1
 			// it makes the connection between SmartThing and the closest AccessPoint
@@ -429,7 +429,6 @@ public class AppExample {
 		TimeKeeper.getInstance().setSimulationStartTime(
 			Calendar.getInstance().getTimeInMillis());
 		MyStatistics.getInstance().setSeed(getSeed());
-		System.out.println("Whereami");
 		for (MobileDevice st : getSmartThings()) {
 			if (getMigPointPolicy() == Policies.FIXED_MIGRATION_POINT) {
 				if (getMigStrategyPolicy() == Policies.LOWEST_LATENCY) {
@@ -462,7 +461,6 @@ public class AppExample {
 					MyStatistics.getInstance().setToPrint(
 						"FIXED_MIGRATION_POINT_with_LOWEST_DIST_BW_SMARTTING_SERVERCLOUDLET");
 				} else if (getMigStrategyPolicy() == Policies.WEIGHTED_MAJORITY) {
-					System.out.println("Bleh");
 					MyStatistics.getInstance().setFileMap("./outputLatencies/"+ st.getMyId()
 						+ "/latencies_FIXED_MIGRATION_POINT_with_WEIGHTED_MAJORITY_seed_"
 						+ getSeed() + "_st_" + st.getMyId()+ ".txt", st.getMyId());

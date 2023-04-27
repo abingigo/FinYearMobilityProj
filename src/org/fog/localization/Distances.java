@@ -1,7 +1,9 @@
 package org.fog.localization;
 
 import java.lang.Math;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.fog.vmmobile.constants.*;
 import org.fog.entities.*;
@@ -101,6 +103,23 @@ public class Distances {
 	// 	return choose;// id
 
 	// }
+
+	public static int theApBetweenSCST(FogDevice f, MobileDevice st)
+	{
+		int id = -1;
+		Map<Integer, Double> distances = new HashMap<Integer, Double>();
+		for(ApDevice ap : f.getApDevices())
+			if(ap.getMaxSmartThing() > ap.getSmartThings().size())
+				distances.put(ap.getId(), checkDistance(ap.getCoord(), st.getCoord()));
+		double min = Double.MAX_VALUE;
+		for(Map.Entry<Integer, Double> d : distances.entrySet())
+			if(d.getValue() < min)
+			{
+				id = d.getKey();
+				min = d.getValue();
+			}
+		return id;
+	}
 
 	public static double findTheta(int coordX, int coordY) {
 		setCoordX(coordX);

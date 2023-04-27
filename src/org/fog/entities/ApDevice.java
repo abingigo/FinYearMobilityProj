@@ -10,7 +10,6 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEvent;
 import org.fog.localization.*;
 import org.fog.placement.MobileController;
-import org.fog.vmmigration.LatencyByDistance;
 import org.fog.vmmobile.LogMobile;
 import org.fog.vmmobile.constants.MobileEvents;
 import org.fog.vmmobile.constants.Policies;
@@ -130,8 +129,7 @@ public class ApDevice extends FogDevice {
 		if (nextAp.getServerCloudlet().equals(serverCloudlet)) {
 			sum = NetworkTopology.getDelay(smartThing.getId(), nextAp.getId())
 				+ NetworkTopology.getDelay(nextAp.getId(), nextAp.getServerCloudlet().getId())
-				+ (1.0 / nextAp.getServerCloudlet().getHost().getAvailableMips())
-				+ LatencyByDistance.latencyConnection(nextAp.getServerCloudlet(), smartThing);
+				+ (1.0 / nextAp.getServerCloudlet().getHost().getAvailableMips());
 		}
 		else {
 			sum = NetworkTopology.getDelay(smartThing.getId(), nextAp.getId())
@@ -139,8 +137,7 @@ public class ApDevice extends FogDevice {
 				+ 1.0 // router
 				+ NetworkTopology.getDelay(nextAp.getServerCloudlet().getId(),
 					serverCloudlet.getId())
-				+ (1.0 / serverCloudlet.getHost().getAvailableMips())
-				+ LatencyByDistance.latencyConnection(serverCloudlet, smartThing);
+				+ (1.0 / serverCloudlet.getHost().getAvailableMips());
 		}
 		return sum;
 	}
@@ -151,14 +148,12 @@ public class ApDevice extends FogDevice {
 		Map<Integer, Double> payoffMatrix = new HashMap<>();
 		for (FogDevice f : fogDevices)
 		{
+			int d = Distances.theApBetweenSCST(f, st);
 			ApDevice ap = null;
 			for(ApDevice a : apDevices)
 			{
-				if(a.getServerCloudlet().getId() == f.getId())
-				{
+				if(a.getId() == d)
 					ap = a;
-					break;
-				}
 			}
 			payoffMatrix.put(f.getId(), (f.getHost().getTotalMips() - f.getEnergyConsumption()) / sumCostFunction(f, ap, st));
 		}
@@ -176,17 +171,21 @@ public class ApDevice extends FogDevice {
 
 		if(devNo == -1) return false;
 
+		for(int i = 0; i < fogDevices.size(); i++)
+			if(fogDevices.get(i).getId() == devNo)
+			{
+				devNo = i;
+				break;
+			}
 		fogDevices.get(devNo).connectServerCloudletSmartThing(st);
 		fogDevices.get(devNo).setSmartThingsWithVm(st, Policies.ADD);
 
+		int d = Distances.theApBetweenSCST(fogDevices.get(devNo), st);
 		ApDevice ap = null;
 		for(ApDevice a : apDevices)
 		{
-			if(a.getServerCloudlet().getId() == fogDevices.get(devNo).getId())
-			{
+			if(a.getId() == d)
 				ap = a;
-				break;
-			}
 		}
 
 		if (ap.getMaxSmartThing() > ap.getSmartThings().size()) {

@@ -13,6 +13,7 @@ public class LatencyByDistance {
 	}
 
 	public static double latencyConnection(FogDevice sc, MobileDevice st) {
+		System.out.println(st.getSourceAp());
 		double distance = Distances.checkDistance(st.getCoord(), st.getSourceAp().getCoord());
 		double latency1 = latencyConnection(st.getSourceAp().getServerCloudlet(),
 			st.getVmLocalServerCloudlet());// bw source and vmLocal

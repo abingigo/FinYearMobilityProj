@@ -1554,6 +1554,7 @@ public class FogDevice extends PowerDatacenter {
 		List<AppLoop> loops = app.getLoops();
 		for (AppLoop loop : loops) {
 			if (loop.hasEdge(srcModule, destModule) && loop.isEndModule(destModule)) {
+				System.out.println("I like long big cocks");
 				Double startTime = TimeKeeper.getInstance().getEmitTimes()
 					.get(tuple.getActualTupleId());
 				if (startTime == null)
