@@ -268,7 +268,7 @@ public class Migration {
 		return choose;
 	}
 
-	public static int getWeightedMajorityAp(List<FogDevice> allServerCloudlets, List<ApDevice> allApDevices)
+	public static int getWeightedMajorityAp(List<FogDevice> allServerCloudlets, MobileDevice st)
 	{
 		FogDevice targetDevice = null;
 		for (FogDevice device : allServerCloudlets) {
@@ -279,16 +279,7 @@ public class Migration {
 			}
 		}
 
-		ApDevice ap = null;
-		for(ApDevice a : allApDevices)
-		{
-			if(a.getServerCloudlet().getId() == targetDevice.getId())
-			{
-				ap = a;
-				break;
-			}
-		}
-		return ap.getId();
+		return Distances.theApBetweenSCST(targetDevice, st);
 	}
 
 	// NOOB CODE 1
@@ -298,19 +289,24 @@ public class Migration {
 		//ALGORITHM 3
 
 		Map<Integer, Double> payoffMatrix = new HashMap<>();
+		allServerCloudlets = serverClouletsAvailableList(allServerCloudlets, smartThing);
+		List<Double> capacities = new ArrayList<>();
+		List<Double> latencies = new ArrayList<>();
+
 		for (FogDevice f : allServerCloudlets)
 		{
-			ApDevice ap = null;
-			for(ApDevice a : allApDevices)
-			{
-				if(a.getServerCloudlet().getId() == f.getId())
-				{
-					ap = a;
-					break;
-				}
-			}
-			payoffMatrix.put(f.getId(), (f.getHost().getTotalMips() - f.getEnergyConsumption()) / sumCostFunction(f, ap, smartThing));
+			int d = Distances.theApBetweenSCST(f, smartThing);
+			//int id = nextAp(allApDevices, smartThing);
+			ApDevice ap = allApDevices.get(d);
+			payoffMatrix.put(f.getMyId(), (f.getHost().getTotalMips() - f.getHost().getUtilizationMips()) / sumCostFunction(f, ap, smartThing));
+			capacities.add(f.getHost().getTotalMips() - f.getEnergyConsumption());
+			latencies.add(sumCostFunction(f, ap, smartThing));
 		}
+
+		//(f.getHost().getTotalMips() - f.getEnergyConsumption()) /
+		System.out.println("Payoffs " + payoffMatrix);
+		System.out.println("Capacities " + capacities);
+		System.out.println("Latencies" + latencies);
 		double maxValue = Double.MIN_VALUE;
 		int devNo = -1;
 		for (Map.Entry<Integer, Double> entry : payoffMatrix.entrySet()) {
@@ -357,9 +353,8 @@ public class Migration {
 			sum = NetworkTopology.getDelay(smartThing.getId(), nextAp.getId())
 				+ NetworkTopology.getDelay(nextAp.getId(), nextAp.getServerCloudlet().getId())
 				+ 1.0 // router
-				+ NetworkTopology.getDelay(nextAp.getServerCloudlet().getId(),
-					serverCloudlet.getId())
-				+ (1.0 / serverCloudlet.getHost().getAvailableMips())
+				+ NetworkTopology.getDelay(nextAp.getServerCloudlet().getId(), serverCloudlet.getId())
+				+ (1.0 / nextAp.getServerCloudlet().getHost().getAvailableMips())
 				+ LatencyByDistance.latencyConnection(serverCloudlet, smartThing);
 		}
 		return sum;

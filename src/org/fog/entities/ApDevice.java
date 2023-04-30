@@ -3,6 +3,7 @@ package org.fog.entities;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.cloudbus.cloudsim.NetworkTopology;
@@ -135,9 +136,9 @@ public class ApDevice extends FogDevice {
 			sum = NetworkTopology.getDelay(smartThing.getId(), nextAp.getId())
 				+ NetworkTopology.getDelay(nextAp.getId(), nextAp.getServerCloudlet().getId())
 				+ 1.0 // router
+				+ (1.0 / nextAp.getServerCloudlet().getHost().getAvailableMips())
 				+ NetworkTopology.getDelay(nextAp.getServerCloudlet().getId(),
-					serverCloudlet.getId())
-				+ (1.0 / serverCloudlet.getHost().getAvailableMips());
+					serverCloudlet.getId());
 		}
 		return sum;
 	}
@@ -146,17 +147,19 @@ public class ApDevice extends FogDevice {
 	double delay)
 	{
 		Map<Integer, Double> payoffMatrix = new HashMap<>();
+		// List<Double> capacities = new ArrayList<>();
+		// List<Double> latencies = new ArrayList<>();
 		for (FogDevice f : fogDevices)
 		{
-			int d = Distances.theApBetweenSCST(f, st);
-			ApDevice ap = null;
-			for(ApDevice a : apDevices)
-			{
-				if(a.getId() == d)
-					ap = a;
-			}
-			payoffMatrix.put(f.getId(), (f.getHost().getTotalMips() - f.getEnergyConsumption()) / sumCostFunction(f, ap, st));
+			int d = Distances.theClosestAp(apDevices, st);
+			payoffMatrix.put(f.getMyId(), (f.getHost().getTotalMips() - f.getHost().getUtilizationMips()) / sumCostFunction(f, apDevices.get(d), st));
+			// capacities.add(f.getHost().getTotalMips() - f.getEnergyConsumption());
+			// latencies.add(sumCostFunction(f, apDevices.get(d), st));
 		}
+		// (f.getHost().getTotalMips() - f.getEnergyConsumption()) /
+		// System.out.println("Payoffs " + payoffMatrix);
+		// System.out.println("Capacities " + capacities);
+		// System.out.println("Latencies" + latencies);
 		double maxValue = Double.MIN_VALUE;
 		int devNo = -1;
 		for (Map.Entry<Integer, Double> entry : payoffMatrix.entrySet()) {
@@ -171,37 +174,23 @@ public class ApDevice extends FogDevice {
 
 		if(devNo == -1) return false;
 
-		for(int i = 0; i < fogDevices.size(); i++)
-			if(fogDevices.get(i).getId() == devNo)
-			{
-				devNo = i;
-				break;
-			}
+		int d = Distances.theClosestAp(apDevices, st);
+		if(d == -1)
+			return false;
+
+		ApDevice ap = apDevices.get(d);
+
+		st.setSourceAp(ap);
+		ap.setSmartThings(st, Policies.ADD);
+		NetworkTopology.addLink(ap.getId(), st.getId(),
+			st.getUplinkBandwidth(), delay);
+		LogMobile.debug("ApDevice.java", st.getName() + " was connected to "
+			+ st.getSourceAp().getName());
+		ap.setUplinkLatency(
+			ap.getUplinkLatency() + delay);
 		fogDevices.get(devNo).connectServerCloudletSmartThing(st);
 		fogDevices.get(devNo).setSmartThingsWithVm(st, Policies.ADD);
-
-		int d = Distances.theApBetweenSCST(fogDevices.get(devNo), st);
-		ApDevice ap = null;
-		for(ApDevice a : apDevices)
-		{
-			if(a.getId() == d)
-				ap = a;
-		}
-
-		if (ap.getMaxSmartThing() > ap.getSmartThings().size()) {
-			st.setSourceAp(ap);
-			ap.setSmartThings(st, Policies.ADD);
-			NetworkTopology.addLink(ap.getId(), st.getId(),
-				st.getUplinkBandwidth(), delay);
-			LogMobile.debug("ApDevice.java", st.getName() + " was connected to "
-				+ st.getSourceAp().getName());
-			ap.setUplinkLatency(
-				ap.getUplinkLatency() + delay);
-			return true;
-		}
-		else {// Ap is full
-			return false;
-		}
+		return true;
 	}
 
 	public ApDevice(String name, int coordX, int coordY, int id) {
