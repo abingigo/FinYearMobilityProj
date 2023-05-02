@@ -50,7 +50,7 @@ public class WeightedMajority implements DecisionMigration {
 				return false;
 			}
 			else {
-				setNextApId(Migration.getWeightedMajorityAp(serverCloudlets, apDevices));
+				setNextApId(Migration.nextAp(apDevices, smartThing));
 				if (getNextApId() >= 0) {
 					// verify if the next Ap is edge (return false if the ServerCloudlet destination is the same ServerCloud source)
 					if (!Migration.isEdgeAp(apDevices.get(getNextApId()), smartThing)) {

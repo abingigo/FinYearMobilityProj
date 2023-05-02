@@ -393,7 +393,6 @@ public class MyStatistics {
 	}
 
 	public void setFileMap(String name, int id) {
-		System.out.println("Hello");
 		File file = new File(name);
 		this.fileMap.put(id, file);
 		getFileMap().get(id).delete();

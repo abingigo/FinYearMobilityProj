@@ -235,7 +235,7 @@ public class AppExample {
 		int myCount = 0;
 
 		//*******************************OLD CODE****************************************************************
-		if(false)
+		if(getMigStrategyPolicy() != Policies.WEIGHTED_MAJORITY)
 		{
 			//REPLACE WITH MCG CHANGE REQUIRED 1
 			// it makes the connection between SmartThing and the closest AccessPoint
@@ -288,7 +288,7 @@ public class AppExample {
 						st.getName() + " isn't connected");
 				}
 			}
-			LogMobile.debug("AppExample.java", "total no connection: " + myCount);
+			System.out.println("AppExample.java total no connection: " + myCount);
 	
 			// ***************************************END*****************************************
 		}
@@ -896,7 +896,7 @@ public class AppExample {
 		}
 		try {
 			coordX = getRand().nextInt(MaxAndMin.MAX_X);
-			coordY = getRand().nextInt(MaxAndMin.MAX_X);
+			coordY = getRand().nextInt(MaxAndMin.MAX_Y);
 			double maxBandwidth = getMaxBandwidth() * 1024 * 1024;
 			double minBandwidth = (getMaxBandwidth() - 1) * 1024 * 1024;
 			double upLinkRandom = minBandwidth

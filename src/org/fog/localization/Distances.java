@@ -110,7 +110,7 @@ public class Distances {
 		Map<Integer, Double> distances = new HashMap<Integer, Double>();
 		for(ApDevice ap : f.getApDevices())
 			if(ap.getMaxSmartThing() > ap.getSmartThings().size())
-				distances.put(ap.getId(), checkDistance(ap.getCoord(), st.getCoord()));
+				distances.put(ap.getMyId(), checkDistance(ap.getCoord(), st.getCoord()));
 		double min = Double.MAX_VALUE;
 		for(Map.Entry<Integer, Double> d : distances.entrySet())
 			if(d.getValue() < min)
