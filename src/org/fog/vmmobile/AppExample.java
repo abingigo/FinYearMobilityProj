@@ -235,7 +235,7 @@ public class AppExample {
 		int myCount = 0;
 
 		//*******************************OLD CODE****************************************************************
-		if(true)
+		if(false)
 		{
 			//REPLACE WITH MCG CHANGE REQUIRED 1
 			// it makes the connection between SmartThing and the closest AccessPoint
